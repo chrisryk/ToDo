@@ -14,6 +14,7 @@ namespace ToDo
         private string userTaskTitle;
         private string userDescription;
         private int userStatus;
+        private Tasks taskToChange;
         private Operation operation;
         public ToDo()
         {
@@ -45,6 +46,7 @@ namespace ToDo
                        select new { ID = t.id, TITLE = t.task, DESCRIPTION = t.description, STATUS = s.status };
 
             gvTasks.DataSource = data.ToList();
+            gvTasks.Columns[0].Visible = false;
         }
         private void btnAdd_Click(object sender, EventArgs e)
         {
@@ -59,6 +61,7 @@ namespace ToDo
             if (userChoice == DialogResult.Yes)
             {
                 SaveTask();
+                ClearAddTextBoxes();
                 ShowTasks();
             }
         }
@@ -69,12 +72,15 @@ namespace ToDo
             task.task = userTaskTitle;
             task.description = userDescription;
             task.status_id = userStatus;
-
             db.Tasks.Add(task);
             db.SaveChanges();
         }
 
         private void btnClear_Click(object sender, EventArgs e)
+        {
+            ClearAddTextBoxes();
+        }
+        private void ClearAddTextBoxes()
         {
             tbTitle.Text = String.Empty;
             tbDesc.Text = String.Empty;
@@ -85,6 +91,7 @@ namespace ToDo
             }
             radioPending.Checked = true;
         }
+
         private void SetRowToEditDelete()
         {
             var dataToDChange = gvTasks.SelectedRows;
@@ -93,8 +100,6 @@ namespace ToDo
             {
                 switch (operation)
                 {
-                    case Operation.None:
-                        break;
                     case Operation.Edit:
                         MessageBox.Show("Select only one row to edit.", "Warning!");
                         break;
@@ -111,8 +116,6 @@ namespace ToDo
             {
                 switch (operation)
                 {
-                    case Operation.None:
-                        break;
                     case Operation.Edit:
                         MessageBox.Show("Select one row to edit.", "Warning!");
                         break;
@@ -127,12 +130,10 @@ namespace ToDo
             else if (dataToDChange.Count == 1)
             {
                 int dataId = Convert.ToInt32(dataToDChange[0].Cells["ID"].Value);
-                var taskToChange = db.Tasks.Where(t => t.id == dataId).FirstOrDefault();
+                taskToChange = db.Tasks.Where(t => t.id == dataId).FirstOrDefault();
 
                 switch (operation)
                 {
-                    case Operation.None:
-                        break;
                     case Operation.Edit:
                         EditTask(taskToChange);
                         break;
@@ -175,17 +176,37 @@ namespace ToDo
         {
             tbDescEdit.Text = task.description;
             tbTitleEdit.Text = task.task;
+            var taskStatus = from t in tasks
+                             join s in statuses
+                             on t.status_id equals s.id
+                             where s.id == task.status_id
+                             select s.id;
+            cbStatusEdit.SelectedValue = taskStatus.FirstOrDefault();
         }
 
         private void ClearEditTextBoxes()
         {
             tbDescEdit.Text = String.Empty;
             tbTitleEdit.Text = String.Empty;
+            var defaultStatus = from s in statuses
+                                where s.status.Contains("done")
+                                select s.id;
+            cbStatusEdit.SelectedValue = defaultStatus.FirstOrDefault();
         }
 
         private void btnClearEdit_Click(object sender, EventArgs e)
         {
             ClearEditTextBoxes();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            taskToChange.task = tbTitleEdit.Text;
+            taskToChange.description = tbDescEdit.Text;
+            taskToChange.status_id = (int)cbStatusEdit.SelectedValue;
+            db.SaveChanges();
+            ClearEditTextBoxes();
+            ShowTasks();
         }
     }
 }

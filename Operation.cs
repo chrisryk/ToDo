@@ -10,6 +10,7 @@ namespace ToDo
     {
         None,
         Edit,
-        Delete
+        Delete,
+        Add
     }
 }
