@@ -14,6 +14,7 @@ namespace ToDo
         private string userTaskTitle;
         private string userDescription;
         private int userStatus;
+        private Operation operation;
         public ToDo()
         {
             InitializeComponent();
@@ -51,11 +52,11 @@ namespace ToDo
             userDescription = tbDesc.Text;
             userStatus = Convert.ToInt32(gbOptions.Controls.OfType<RadioButton>()
                                                            .FirstOrDefault(b => b.Checked).Tag);
-            var result = MessageBox.Show($"Are you sure to add taks?\n" +
+            var userChoice = MessageBox.Show($"Are you sure to add taks?\n" +
                 $"{userTaskTitle} - {userDescription} - {gbOptions.Controls.OfType<RadioButton>().FirstOrDefault(b => b.Checked).Text}",
                 "Confirm operation", MessageBoxButtons.YesNo);
             
-            if (result == DialogResult.Yes)
+            if (userChoice == DialogResult.Yes)
             {
                 SaveTask();
                 ShowTasks();
@@ -73,11 +74,6 @@ namespace ToDo
             db.SaveChanges();
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnClear_Click(object sender, EventArgs e)
         {
             tbTitle.Text = String.Empty;
@@ -88,6 +84,108 @@ namespace ToDo
                 button.Checked = false;
             }
             radioPending.Checked = true;
+        }
+        private void SetRowToEditDelete()
+        {
+            var dataToDChange = gvTasks.SelectedRows;
+
+            if (dataToDChange.Count > 1)
+            {
+                switch (operation)
+                {
+                    case Operation.None:
+                        break;
+                    case Operation.Edit:
+                        MessageBox.Show("Select only one row to edit.", "Warning!");
+                        break;
+                    case Operation.Delete:
+                        MessageBox.Show("Select only one row to delete.", "Warning!");
+                        break;
+                    default:
+                        break;
+                }
+                
+                ClearEditTextBoxes();
+            }
+            if (dataToDChange.Count < 1)
+            {
+                switch (operation)
+                {
+                    case Operation.None:
+                        break;
+                    case Operation.Edit:
+                        MessageBox.Show("Select one row to edit.", "Warning!");
+                        break;
+                    case Operation.Delete:
+                        MessageBox.Show("Select one row to delete.", "Warning!");
+                        break;
+                    default:
+                        break;
+                }
+                ClearEditTextBoxes();
+            }
+            else if (dataToDChange.Count == 1)
+            {
+                int dataId = Convert.ToInt32(dataToDChange[0].Cells["ID"].Value);
+                var taskToChange = db.Tasks.Where(t => t.id == dataId).FirstOrDefault();
+
+                switch (operation)
+                {
+                    case Operation.None:
+                        break;
+                    case Operation.Edit:
+                        EditTask(taskToChange);
+                        break;
+                    case Operation.Delete:
+                        DeleteTask(taskToChange);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            operation = Operation.Delete;
+            SetRowToEditDelete();
+            operation = Operation.None;
+        }
+
+        private void DeleteTask(Tasks task)
+        {
+            var userChoice = MessageBox.Show("This operation will delete task, are you sure?", "Warning!", MessageBoxButtons.YesNo);
+            
+            if (userChoice == DialogResult.Yes)
+            {
+                db.Tasks.Remove(task);
+                db.SaveChanges();
+                ShowTasks();
+                MessageBox.Show("Task removed form list.", "Success!");
+            }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            operation = Operation.Edit;
+            SetRowToEditDelete();
+            operation = Operation.None;
+        }
+
+        private void EditTask(Tasks task)
+        {
+            tbDescEdit.Text = task.description;
+            tbTitleEdit.Text = task.task;
+        }
+
+        private void ClearEditTextBoxes()
+        {
+            tbDescEdit.Text = String.Empty;
+            tbTitleEdit.Text = String.Empty;
+        }
+
+        private void btnClearEdit_Click(object sender, EventArgs e)
+        {
+            ClearEditTextBoxes();
         }
     }
 }

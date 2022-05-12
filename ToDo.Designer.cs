@@ -50,6 +50,7 @@
             this.btnEdit = new System.Windows.Forms.Button();
             this.cbStatusEdit = new System.Windows.Forms.ComboBox();
             this.btnClearAdd = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gvTasks)).BeginInit();
             this.gbOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -71,7 +72,7 @@
             // 
             // btnShowTasks
             // 
-            this.btnShowTasks.Location = new System.Drawing.Point(12, 2);
+            this.btnShowTasks.Location = new System.Drawing.Point(399, 2);
             this.btnShowTasks.Name = "btnShowTasks";
             this.btnShowTasks.Size = new System.Drawing.Size(97, 49);
             this.btnShowTasks.TabIndex = 1;
@@ -170,7 +171,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(1116, 3);
+            this.btnDelete.Location = new System.Drawing.Point(729, 2);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(97, 49);
             this.btnDelete.TabIndex = 8;
@@ -191,6 +192,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnSave);
             this.splitContainer1.Panel2.Controls.Add(this.lbStatusEdit);
             this.splitContainer1.Panel2.Controls.Add(this.btnClearEdit);
             this.splitContainer1.Panel2.Controls.Add(this.tbDescEdit);
@@ -229,6 +231,7 @@
             this.btnClearEdit.TabIndex = 18;
             this.btnClearEdit.Text = "CLEAR";
             this.btnClearEdit.UseVisualStyleBackColor = true;
+            this.btnClearEdit.Click += new System.EventHandler(this.btnClearEdit_Click);
             // 
             // tbDescEdit
             // 
@@ -264,12 +267,13 @@
             // 
             // btnEdit
             // 
-            this.btnEdit.Location = new System.Drawing.Point(658, 106);
+            this.btnEdit.Location = new System.Drawing.Point(564, 3);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(97, 49);
             this.btnEdit.TabIndex = 11;
             this.btnEdit.Text = "EDIT";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // cbStatusEdit
             // 
@@ -289,6 +293,15 @@
             this.btnClearAdd.Text = "CLEAR";
             this.btnClearAdd.UseVisualStyleBackColor = true;
             this.btnClearAdd.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(658, 106);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(97, 49);
+            this.btnSave.TabIndex = 20;
+            this.btnSave.Text = "SAVE";
+            this.btnSave.UseVisualStyleBackColor = true;
             // 
             // ToDo
             // 
@@ -335,6 +348,7 @@
         private System.Windows.Forms.Label lbTitleEdit;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Label lbStatusEdit;
+        private System.Windows.Forms.Button btnSave;
     }
 }
 
